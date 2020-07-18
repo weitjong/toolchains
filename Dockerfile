@@ -36,4 +36,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends autoconf automa
 
 COPY --chown=ng:ng ng/ /home/ng/
 
-RUN su - ng -c 'cd src && for f in $CONFIGS; do echo $f; ln -sf $f .config; ct-ng build; done'
+RUN su ng -c 'cd ~/src && for f in $CONFIGS; do echo $f; ln -sf $f .config; ct-ng build; done'
