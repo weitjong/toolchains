@@ -31,7 +31,7 @@ ARG CONFIGS
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y --no-install-recommends autoconf automake bison flex g++ gawk help2man libncurses5-dev libtool-bin make patch python3 texinfo unzip wget xz-utils \
+RUN apt-get update && apt-get install -y --no-install-recommends automake bison flex g++ gawk help2man libncurses5-dev libtool-bin make patch python3-dev python3-distutils texinfo unzip wget xz-utils \
     \
     # Download released tarball for crosstool-ng and build it
     && mkdir /crosstool-ng && wget -qO- http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.24.0.tar.bz2 |tar --strip-components=1 -xjC /crosstool-ng \
@@ -41,4 +41,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends autoconf automa
 
 COPY --chown=ng:ng ng/ /home/ng/
 
-RUN su ng -c 'cd ~/src && for config in $CONFIGS; do echo $config && ct-ng $config && sed -i 's/^CT_LOG_PROGRESS_BAR=y$/CT_LOG_PROGRESS_BAR=n/' .config && ct-ng build; done'
+RUN su ng -c 'cd ~/src && set -e && for config in $CONFIGS; do echo $config && ct-ng $config && sed -i 's/^CT_LOG_PROGRESS_BAR=y$/CT_LOG_PROGRESS_BAR=n/' .config && ct-ng build; done'
