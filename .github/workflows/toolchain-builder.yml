@@ -33,17 +33,21 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
 jobs:
-  rpi:
-    name: Raspberry Pi
+  aarch64-rpi3-linux-gnu: &docker_ct_ng
+    name: Raspberry Pi 3 64-bit
     runs-on: ubuntu-latest
-    env: 
-      CONFIGS: aarch64-rpi3-linux-gnu armv8-rpi3-linux-gnueabihf armv7-rpi2-linux-gnueabihf
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: docker build --build-arg CONFIGS='${{ env.CONFIGS }}' -t weitjong/toolchains-${{ github.job }} .
+      run: docker build --build-arg CONFIG=${{ github.job }} -t weitjong/toolchains-${{ github.job }} .
     - name: Push
       if: github.event_name == 'push'
       run: echo $DOCKER_PASSWORD |docker login -u $DOCKER_USERNAME --password-stdin && docker push weitjong/toolchains-${{ github.job }} && docker logout
-  
+  armv8-rpi3-linux-gnueabihf:
+    <<: *docker_ct_ng
+    name: Raspberry Pi 3
+  armv7-rpi2-linux-gnueabihf:
+    <<: *docker_ct_ng
+    name: Raspberry Pi 2
+
 # vi: set ts=2 sw=2 expandtab:
