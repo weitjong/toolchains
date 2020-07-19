@@ -33,11 +33,10 @@ jobs:
     name: Raspberry Pi
     runs-on: ubuntu-latest
     env: 
-      CONFIGS: aarch64-rpi3-linux-gnu.config armv8-rpi3-linux-gnueabihf.config armv7-rpi2-linux-gnueabihf.config armv6-rpi-linux-gnueabi.config
-      TAG_NAME: weitjong/toolchains-rpi
+      CONFIGS: aarch64-rpi3-linux-gnu armv8-rpi3-linux-gnueabihf armv7-rpi2-linux-gnueabihf
     steps:
     - uses: actions/checkout@v2
     - name: Build
-      run: docker build --build-arg CONFIGS='${{ env.CONFIGS }}' -t ${{ env.TAG_NAME}} .
+      run: docker build --build-arg CONFIGS='${{ env.CONFIGS }}' -t weitjong/toolchains-${{ github.job }} .
 
 # vi: set ts=2 sw=2 expandtab:
