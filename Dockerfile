@@ -22,6 +22,11 @@
 
 FROM ubuntu:latest
 
+LABEL maintainer="Yao Wei Tjong <weitjong@gmail.com>" \
+      description="Generic cross-compiler toolchains builder" \
+      source-repo=https://github.com/weitjong/dockerized \
+      binary-repo=https://hub.docker.com/u/weitjong
+
 ARG CONFIGS
 
 ENV DEBIAN_FRONTEND=noninteractive
