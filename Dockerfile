@@ -24,7 +24,7 @@ FROM ubuntu:latest
 
 LABEL maintainer="Yao Wei Tjong <weitjong@gmail.com>" \
       description="Generic cross-compiler toolchains builder" \
-      source-repo=https://github.com/weitjong/dockerized \
+      source-repo=https://github.com/weitjong/toolchains \
       binary-repo=https://hub.docker.com/u/weitjong
 
 ARG CONFIG
