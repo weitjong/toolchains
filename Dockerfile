@@ -40,4 +40,4 @@ RUN apt-get update && apt-get install -y --no-install-recommends automake bison 
 
 COPY --chown=ng:ng ng/ /home/ng/
 
-RUN su ng -c "cd ~/src && ct-ng $CONFIG && sed -i 's/CT_LOG_PROGRESS_BAR=y/CT_LOG_PROGRESS_BAR=n/; s/# CT_OMIT_TARGET_VENDOR is not set/CT_OMIT_TARGET_VENDOR=y/' .config && ct-ng build"
+RUN su ng -c "cd ~/src && ct-ng $CONFIG && sed -i 's/CT_LOG_PROGRESS_BAR=y/CT_LOG_PROGRESS_BAR=n/;s/# CT_OMIT_TARGET_VENDOR is not set/CT_OMIT_TARGET_VENDOR=y/;s/CT_CC_GCC_EXTRA_CONFIG_ARRAY=\"\"/CT_CC_GCC_EXTRA_CONFIG_ARRAY=\"--enable-multiarch\"/' .config && ct-ng build"
