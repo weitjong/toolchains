@@ -20,40 +20,7 @@
 # THE SOFTWARE.
 #
 
----
-
-name: Compiler toolchains builder
-on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
-jobs:
-  triplet:
-    name: Triplet
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        triplet:
-          - aarch64-unknown-linux-gnu
-          - arm-cortex_a15-linux-gnueabihf
-        include:
-          - {triplet: aarch64-rpi3-linux-gnu, old-glibc: old-glibc}
-          - {triplet: armv8-rpi3-linux-gnueabihf, old-glibc: old-glibc}
-    env:
-      tag: weitjong/toolchains:${{ matrix.triplet }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build
-        run: docker build --build-arg CONFIG=${{ matrix.triplet }} --build-arg OLD_GLIBC=${{ matrix.old-glibc }} -t $tag .
-      - name: Push
-        if: github.event_name == 'push'
-        run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} |docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker push $tag
-          docker logout
-
-...
-
-# vi: set ts=2 sw=2 expandtab:
+s/CT_GLIBC_V_2_31=y/CT_GLIBC_V_2_31=n/
+s/# CT_GLIBC_V_2_28 is not set/CT_GLIBC_V_2_28=y/
+s/CT_GLIBC_VERSION="2.31"/CT_GLIBC_VERSION="2.28"/
+s/CT_GLIBC_ENABLE_WERROR=y/CT_GLIBC_ENABLE_WERROR=n/

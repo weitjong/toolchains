@@ -20,40 +20,8 @@
 # THE SOFTWARE.
 #
 
----
-
-name: Compiler toolchains builder
-on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
-jobs:
-  triplet:
-    name: Triplet
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        triplet:
-          - aarch64-unknown-linux-gnu
-          - arm-cortex_a15-linux-gnueabihf
-        include:
-          - {triplet: aarch64-rpi3-linux-gnu, old-glibc: old-glibc}
-          - {triplet: armv8-rpi3-linux-gnueabihf, old-glibc: old-glibc}
-    env:
-      tag: weitjong/toolchains:${{ matrix.triplet }}
-    steps:
-      - uses: actions/checkout@v2
-      - name: Build
-        run: docker build --build-arg CONFIG=${{ matrix.triplet }} --build-arg OLD_GLIBC=${{ matrix.old-glibc }} -t $tag .
-      - name: Push
-        if: github.event_name == 'push'
-        run: |
-          echo ${{ secrets.DOCKER_PASSWORD }} |docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-          docker push $tag
-          docker logout
-
-...
-
-# vi: set ts=2 sw=2 expandtab:
+s/CT_LOG_PROGRESS_BAR=y/CT_LOG_PROGRESS_BAR=n/
+s/CT_ARCH_CPU=".*"/CT_ARCH_CPU=""/
+s/CT_ARCH_SUFFIX=".*"/CT_ARCH_SUFFIX=""/
+s/# CT_OMIT_TARGET_VENDOR is not set/CT_OMIT_TARGET_VENDOR=y/
+s/CT_CC_GCC_EXTRA_CONFIG_ARRAY=""/CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-multiarch"/

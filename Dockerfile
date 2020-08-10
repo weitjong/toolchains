@@ -28,16 +28,17 @@ LABEL maintainer="Yao Wei Tjong <weitjong@gmail.com>" \
       binary-repo=https://hub.docker.com/u/weitjong
 
 ARG CONFIG
+ARG OLD_GLIBC
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y --no-install-recommends automake bison flex g++ gawk help2man libncurses5-dev libtool-bin make patch python3-dev python3-distutils texinfo unzip wget xz-utils \
-    \
-    && mkdir /crosstool-ng && wget -qO- http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.24.0.tar.bz2 |tar --strip-components=1 -xjC /crosstool-ng \
-    && cd /crosstool-ng && ./configure && make && make install \
-    \
-    && useradd -s /bin/bash ng
+RUN apt-get update && apt-get install -y --no-install-recommends automake bison ca-certificates flex g++ gawk help2man libncurses5-dev libtool-bin make patch python3-dev python3-distutils rsync texinfo unzip wget xz-utils \
+ \
+ && mkdir /crosstool-ng && wget -qO- https://github.com/crosstool-ng/crosstool-ng/archive/master.tar.gz |tar --strip-components=1 -xzC /crosstool-ng \
+ && cd /crosstool-ng && ./bootstrap && ./configure && make && make install \
+ \
+ && useradd -ms /bin/bash ng
 
-COPY --chown=ng:ng ng/ /home/ng/
+COPY sysroot/ /
 
-RUN su ng -c "cd ~/src && ct-ng $CONFIG && sed -i 's/CT_LOG_PROGRESS_BAR=y/CT_LOG_PROGRESS_BAR=n/;s/# CT_OMIT_TARGET_VENDOR is not set/CT_OMIT_TARGET_VENDOR=y/;s/CT_CC_GCC_EXTRA_CONFIG_ARRAY=\"\"/CT_CC_GCC_EXTRA_CONFIG_ARRAY=\"--enable-multiarch\"/' .config && ct-ng build"
+RUN su ng -c "mkdir ~/src && cd ~/src && ct-ng $CONFIG && sed -i -f /config.sed .config && if [[ '$OLD_GLIBC' ]]; then sed -i -f /config-old-glibc.sed .config; fi && ct-ng build"
