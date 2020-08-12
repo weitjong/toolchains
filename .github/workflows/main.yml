@@ -29,24 +29,23 @@ on:
   pull_request:
     branches: [master]
 jobs:
-  triplet:
-    name: Triplet
+  toolchain:
+    name: Toolchain
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        triplet:
+        config:
+          - aarch64-rpi3-linux-gnu
+          - armv8-rpi3-linux-gnueabihf
           - aarch64-unknown-linux-gnu
-          - arm-cortex_a15-linux-gnueabihf
-        include:
-          - {triplet: aarch64-rpi3-linux-gnu, old-glibc: old-glibc}
-          - {triplet: armv8-rpi3-linux-gnueabihf, old-glibc: old-glibc}
+          - arm-unknown-linux-gnueabi
     env:
-      tag: weitjong/toolchains:${{ matrix.triplet }}
+      tag: weitjong/toolchains:${{ matrix.config }}
     steps:
       - uses: actions/checkout@v2
       - name: Build
-        run: docker build --build-arg CONFIG=${{ matrix.triplet }} --build-arg OLD_GLIBC=${{ matrix.old-glibc }} -t $tag .
+        run: docker build --build-arg CONFIG=${{ matrix.config }} -t $tag .
       - name: Push
         if: github.event_name == 'push'
         run: |

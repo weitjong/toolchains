@@ -20,24 +20,11 @@
 # THE SOFTWARE.
 #
 
-FROM ubuntu:latest
-
-LABEL maintainer="Yao Wei Tjong <weitjong@gmail.com>" \
-      description="Generic cross-compiler toolchains builder" \
-      source-repo=https://github.com/weitjong/toolchains \
-      binary-repo=https://hub.docker.com/u/weitjong
-
-ARG CONFIG
-
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y --no-install-recommends automake bison ca-certificates flex g++ gawk help2man libncurses5-dev libtool-bin make patch python3-dev python3-distutils rsync texinfo unzip wget xz-utils \
- \
- && mkdir /crosstool-ng && wget -qO- https://github.com/crosstool-ng/crosstool-ng/archive/master.tar.gz |tar --strip-components=1 -xzC /crosstool-ng \
- && cd /crosstool-ng && ./bootstrap && ./configure && make && make install \
- \
- && useradd -ms /bin/bash ng
-
-COPY sysroot/ /
-
-RUN su ng -c "mkdir ~/src && cd ~/src && ct-ng $CONFIG && sed -i -f /config.sed .config && if [[ -f /$CONFIG.sed ]]; then sed -i -f /$CONFIG.sed .config; fi && ct-ng build"
+s/CT_LINUX_V_5_5=y/CT_LINUX_V_5_5=n/
+s/# CT_LINUX_V_4_19 is not set/CT_LINUX_V_4_19=y/
+s/CT_LINUX_VERSION="5.5.5"/CT_LINUX_VERSION="4.19.105"/
+s/CT_GLIBC_MIN_KERNEL="5.5.5"/CT_GLIBC_MIN_KERNEL="4.19.105"/
+s/CT_GLIBC_V_2_31=y/CT_GLIBC_V_2_31=n/
+s/# CT_GLIBC_V_2_28 is not set/CT_GLIBC_V_2_28=y/
+s/CT_GLIBC_VERSION="2.31"/CT_GLIBC_VERSION="2.28"/
+s/CT_GLIBC_ENABLE_WERROR=y/CT_GLIBC_ENABLE_WERROR=n/
