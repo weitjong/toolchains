@@ -20,13 +20,13 @@
 # THE SOFTWARE.
 #
 
-FROM weitjong/x-tool
-
-LABEL maintainer="Yao Wei Tjong <weitjong@gmail.com>" \
-      description="Generic cross-compiler toolchains builder" \
-      source-repo=https://github.com/weitjong/toolchains \
-      binary-repo=https://hub.docker.com/u/weitjong
-
-ARG CONFIG
-
-RUN su ng -c "mkdir ~/src && cd ~/src && ct-ng $CONFIG && sed -i -f /mod/config.sed .config && if [[ -f /mod/$CONFIG.sed ]]; then sed -i -f /mod/$CONFIG.sed .config; fi && export DEB_TARGET_MULTIARCH=$(echo $CONFIG |perl -pe 's/(aarch64|arm).*-.+(-.+)(-.+)/$1$2$3/' -) && ct-ng build"
+s/CT_PATCH_BUNDLED=y/CT_PATCH_BUNDLED=n/
+s/# CT_PATCH_BUNDLED_LOCAL is not set/CT_PATCH_BUNDLED_LOCAL=y/
+s/CT_PATCH_ORDER="bundled"/CT_PATCH_ORDER="bundled,local"/
+/CT_PATCH_ORDER/ a CT_LOCAL_PATCH_DIR="/patch"
+/CT_PATCH_ORDER/ a CT_PATCH_USE_LOCAL=y
+s/CT_LOG_PROGRESS_BAR=y/CT_LOG_PROGRESS_BAR=n/
+s/CT_ARCH_CPU=".*"/CT_ARCH_CPU=""/
+s/CT_ARCH_SUFFIX=".*"/CT_ARCH_SUFFIX=""/
+s/# CT_OMIT_TARGET_VENDOR is not set/CT_OMIT_TARGET_VENDOR=y/
+s/CT_CC_GCC_EXTRA_CONFIG_ARRAY=""/CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-multiarch"/

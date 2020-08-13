@@ -20,8 +20,20 @@
 # THE SOFTWARE.
 #
 
-s/CT_LOG_PROGRESS_BAR=y/CT_LOG_PROGRESS_BAR=n/
-s/CT_ARCH_CPU=".*"/CT_ARCH_CPU=""/
-s/CT_ARCH_SUFFIX=".*"/CT_ARCH_SUFFIX=""/
-s/# CT_OMIT_TARGET_VENDOR is not set/CT_OMIT_TARGET_VENDOR=y/
-s/CT_CC_GCC_EXTRA_CONFIG_ARRAY=""/CT_CC_GCC_EXTRA_CONFIG_ARRAY="--enable-multiarch"/
+FROM ubuntu:latest
+
+LABEL maintainer="Yao Wei Tjong <weitjong@gmail.com>" \
+      description="Generic cross-compiler toolchains builder" \
+      source-repo=https://github.com/weitjong/toolchains \
+      binary-repo=https://hub.docker.com/u/weitjong
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends automake bison ca-certificates flex g++ gawk gettext help2man libncurses5-dev libtool-bin make patch python3-dev python3-distutils rsync texinfo unzip wget xz-utils \
+ \
+ && mkdir /crosstool-ng && wget -qO- https://github.com/crosstool-ng/crosstool-ng/archive/master.tar.gz |tar --strip-components=1 -xzC /crosstool-ng \
+ && cd /crosstool-ng && ./bootstrap && ./configure && make && make install \
+ \
+ && useradd -ms /bin/bash ng
+
+COPY sysroot/ /
