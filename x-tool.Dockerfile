@@ -30,10 +30,12 @@ LABEL maintainer="Yao Wei Tjong <weitjong@gmail.com>" \
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends automake bison ca-certificates flex g++ gawk gettext help2man libncurses5-dev libtool-bin make patch python3-dev python3-distutils rsync texinfo unzip wget xz-utils \
- \
+    \
  && mkdir /crosstool-ng && wget -qO- https://github.com/crosstool-ng/crosstool-ng/archive/master.tar.gz |tar --strip-components=1 -xzC /crosstool-ng \
  && cd /crosstool-ng && ./bootstrap && ./configure && make && make install \
- \
- && useradd -ms /bin/bash ng
+    \
+ && useradd -ms /bin/bash ng \
+    \
+ && apt-get clean
 
 COPY sysroot/ /
