@@ -20,7 +20,7 @@
 # THE SOFTWARE.
 #
 
-FROM weitjong/x-tool
+FROM weitjong/x-tool AS toolchain-builder
 
 LABEL maintainer="Yao Wei Tjong <weitjong@gmail.com>" \
       description="Generic cross-compiler toolchains builder" \
@@ -30,4 +30,11 @@ LABEL maintainer="Yao Wei Tjong <weitjong@gmail.com>" \
 ARG CONFIG
 
 RUN su ng -c "mkdir ~/src && cd ~/src && ct-ng $CONFIG && sed -i -f /mod/config.sed .config && if [[ -f /mod/$CONFIG.sed ]]; then sed -i -f /mod/$CONFIG.sed .config; fi && export DEB_TARGET_MULTIARCH=$(echo $CONFIG |perl -pe 's/(aarch64|arm).*-.+(-.+)(-.+)/$1$2$3/' -) && ct-ng build" \
- && find /home/ng/x-tools -name build.log.bz2 |xargs rm
+    \
+ && find /home/ng/x-tools -name build.log |xargs rm
+
+##
+
+FROM scratch
+
+COPY --from=toolchain-builder /home/ng/x-tools/ /toolchain/
